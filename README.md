@@ -12,10 +12,10 @@
 ## Run it
 
 <p align="center">
-  <a href="https://console.apify.com/actors/ht22I1rCH3Ah9QGnM"><img alt="Run on Apify Console" src="https://img.shields.io/badge/Run%20on-Apify%20Console-FF9012?logo=apify&logoColor=white&style=for-the-badge"></a>
+  <a href="https://apify.com/stefano_seggio/singapore-acra-registry-monitor"><img alt="Run on Apify Store" src="https://img.shields.io/badge/Run%20on-Apify%20Store-FF9012?logo=apify&logoColor=white&style=for-the-badge"></a>
 </p>
 
-This Actor (`ht22I1rCH3Ah9QGnM`) is currently private in Apify Console while it finishes its verification pass. Once it's published to the Apify Store, it becomes publicly runnable at [apify.com/stefano_seggio/singapore-acra-registry-monitor](https://apify.com/stefano_seggio/singapore-acra-registry-monitor) with no direct Console link required.
+Live and public at [apify.com/stefano_seggio/singapore-acra-registry-monitor](https://apify.com/stefano_seggio/singapore-acra-registry-monitor). Owner console: [console.apify.com/actors/ht22I1rCH3Ah9QGnM](https://console.apify.com/actors/ht22I1rCH3Ah9QGnM).
 
 > This repository is a documentation and integration wrapper around that Actor - the MIT license below covers this repo's own README, snippets, and docs, not the Actor's proprietary TypeScript source, which stays closed and hosted on Apify.
 
