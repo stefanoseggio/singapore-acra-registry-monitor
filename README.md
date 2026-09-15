@@ -289,6 +289,44 @@ required. This is the real, live payload structure from
   ACRA publishes it, except for UENs you explicitly add to `watchlistUens`
   with your own ACRA API key.
 
+## Instant Terminal Run (cURL)
+
+Runs synchronously and returns the resulting dataset items directly in the response - no polling needed. Get your token from [console.apify.com/settings/integrations](https://console.apify.com/settings/integrations).
+
+```bash
+curl -X POST "https://api.apify.com/v2/acts/ht22I1rCH3Ah9QGnM/run-sync-get-dataset-items?token=<YOUR_API_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "shardSelection": [
+    "A",
+    "B",
+    "C"
+  ],
+  "onlyNew": true,
+  "maxItems": 5000
+}'
+```
+
+## Sample Extracted Dataset (JSON)
+
+One real record from this Actor's own dataset, matching `.actor/dataset_schema.json`:
+
+```json
+{
+  "event_id": "105eabde3d62b429b5d0e75fabb3ed20e1e42aa6",
+  "event_type": "STATUS_CHANGE",
+  "record_id": "190700013E",
+  "uen": "190700013E",
+  "entity_name": "WEE BROTHERS STEAMSHIP COMPANY LIMITED",
+  "entity_status_description": "Struck Off",
+  "previous_status": "Live Company",
+  "primary_ssic_code": "96099",
+  "is_new": false,
+  "source_url": "https://data.gov.sg/collections/2/view",
+  "scraped_at": "2026-09-11T14:02:03.000Z"
+}
+```
+
 ## Pricing
 
 | Event | Price | When it's charged |
