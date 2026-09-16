@@ -307,6 +307,46 @@ curl -X POST "https://api.apify.com/v2/acts/ht22I1rCH3Ah9QGnM/run-sync-get-datas
 }'
 ```
 
+### Python (`apify-client`)
+
+```python
+import os
+from apify_client import ApifyClient
+
+client = ApifyClient(os.environ["APIFY_TOKEN"])
+
+run = client.actor("stefano_seggio/singapore-acra-registry-monitor").call(run_input={
+    "shardSelection": ["A", "B", "C"],
+    "onlyNew": True,
+    "maxItems": 5000,
+})
+
+for item in client.dataset(run["defaultDatasetId"]).iterate_items():
+    print(item)
+```
+
+### Node.js (`apify-client`)
+
+```javascript
+import { ApifyClient } from 'apify-client';
+
+const client = new ApifyClient({
+    token: process.env.APIFY_TOKEN,
+});
+
+const run = await client.actor('stefano_seggio/singapore-acra-registry-monitor').call({
+    shardSelection: ['A', 'B', 'C'],
+    onlyNew: true,
+    maxItems: 5000,
+});
+
+const { items } = await client.dataset(run.defaultDatasetId).listItems();
+
+items.forEach((item) => {
+    console.log(item);
+});
+```
+
 ## Sample Extracted Dataset (JSON)
 
 One real record from this Actor's own dataset, matching `.actor/dataset_schema.json`:
@@ -343,6 +383,35 @@ to get `BASELINE_SNAPSHOT`/`SNAPSHOT_NO_DIFF` records (always free) and
 confirm your filters and shard selection behave as expected, or point
 `watchlistUens` at a handful of UENs you already know the status of so
 early paid events are naturally few and cheap to review.
+
+## Cost & BYOK Disclosure
+
+This Actor requires **no third-party key** for its default operation — the monthly `data.gov.sg`
+Collection 2 bulk extract is a licensed, public source, and every `NEW_LISTING`/`STATUS_CHANGE`/
+`UPDATED` event above is billed only through Apify's own Pay-Per-Event mechanism. An unchanged
+entity's fingerprint matches the last run and is classified `SNAPSHOT_NO_DIFF` — suppressed
+before delivery, never billed, not a refund after the fact.
+
+**Optional BYOK tier:** setting `watchlistUens` activates real-time refresh for that specific set
+of entities, which requires your own `acraBusinessProfileApiKey` from ACRA's API Marketplace
+(EIQ subscription). That key belongs exclusively to your own ACRA account, is billed by ACRA
+directly to you, and is never pooled, stored beyond the run, or reused across other customers.
+Every other input field works with no key at all.
+
+## Contributing & Local Setup
+
+This repository is a **documentation and integration wrapper**, not the Actor's source — the
+delta-engine, fingerprinting, and ACRA-parsing logic described above is proprietary and runs
+privately on Apify's platform (see the license note at the top of this README). There is no
+`src/` here to clone and build locally.
+
+If you find a documentation error, an outdated code sample, or want to propose a new filter or
+output field: open an issue directly on this Actor's
+[Apify Store page](https://apify.com/stefano_seggio/singapore-acra-registry-monitor), or open a
+PR against this repository for README/example fixes. Typical triage time is within 48 hours (see
+Support below). Testing the Actor itself — including any watchlist or filter configuration — is
+done by running it directly from the Apify Console or via the Quickstart snippets above; there is
+no local `apify run` workflow for the closed-source logic itself.
 
 ## Support & Enterprise SLA
 
