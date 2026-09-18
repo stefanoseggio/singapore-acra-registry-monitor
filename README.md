@@ -288,6 +288,21 @@ required. This is the real, live payload structure from
   refreshes monthly. This Actor cannot report a status change faster than
   ACRA publishes it, except for UENs you explicitly add to `watchlistUens`
   with your own ACRA API key.
+- **Real observed runtime, disclosed plainly:** across this Actor's actual
+  production run history, wall-clock time has ranged from 49.7s to 971.5s
+  (~16 minutes) - a ~20x spread from only 2 real runs. That's not noise:
+  the slow run was a first-ever run against shard A with `onlyNew: true`,
+  which (per the baseline behavior above) delivers zero records and so can
+  never exit early once `maxItems` is reached - it has to walk the entire
+  shard to completion to establish the baseline. The fast run came a day
+  later against that now-baselined shard and finished in under a minute.
+  Peak memory used across both runs: 613 MB. Given real data is limited to
+  these 2 runs, this Actor's platform timeout is deliberately left at
+  Apify's own 3600s default rather than tightened further - it's the
+  slowest Actor in the wider Delta Registry fleet by measured wall-clock
+  time, and a first-ever baseline run on a shard you haven't monitored
+  before can legitimately take this long. Memory is set to 2048 MB
+  (roughly 3x the observed 613 MB peak).
 
 ## Instant Terminal Run (cURL)
 
