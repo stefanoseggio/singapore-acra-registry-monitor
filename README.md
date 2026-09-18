@@ -135,12 +135,12 @@ competitor rather than undercutting on price.
 
 | Field | Type | Default | Description |
 |---|---|---|---|
-| `shardSelection` | array | all 27 shards | Which A-Z/Others letter-shards to monitor. |
+| `shardSelection` | array | `["A"]` (shard A only) | Which A-Z/Others letter-shards to monitor - select more (or all 27) to widen coverage. |
 | `onlyNew` | boolean | `true` | Deliver only NEW_LISTING/STATUS_CHANGE/UPDATED. `false` also delivers uncharged baseline/unchanged rows - roughly 2.1M rows on an unfiltered first run. |
 | `eventTypes` | array | all three | Restrict which charged event types are delivered. |
 | `ssicCodeFilter` | array | `[]` (all industries) | Deliver only entities whose primary or secondary SSIC code starts with one of these prefixes. |
 | `entityStatusFilter` | array | `[]` (all statuses) | Deliver only entities whose current status exactly matches one of these (case-insensitive). |
-| `maxItems` | integer | none | Stop after this many pushed records. Nothing is lost - unreached entities are simply re-evaluated fresh next run. |
+| `maxItems` | integer | `25` | Stop after this many pushed records. Nothing is lost - unreached entities are simply re-evaluated fresh next run. |
 | `deltaStateName` | string | `"default"` | Names the persistent state store. Use a distinct name per independent schedule. |
 | `resetState` | boolean | `false` | Wipes remembered state for the selected shards and re-baselines from scratch. |
 | `watchlistUens` | array | `[]` | Specific UENs to refresh in real time via your own ACRA Business Profile API key, on top of the monthly bulk cycle. |
@@ -225,6 +225,8 @@ This is a real record (UEN 190700013E, live-verified against data.gov.sg 2026-09
 | `changed_fields` | Populated only on `UPDATED` - a real diff (not a hash comparison), each entry `{field_path, previous_value, new_value}` with actual values. |
 | `status_fingerprint` / `content_fingerprint` | SHA-1 idempotency hashes for your own dedup logic - not used internally for classification. |
 | `former_entity_names` / `audit_firm_names` | Arrays; empty when none exist. Audit firm data is genuinely rare in the source (see Reliability). |
+| `uen_issue_date` | Date the UEN was originally issued by ACRA, when available. |
+| `source_dataset_last_updated` | Timestamp of the data.gov.sg source dataset's own last-updated metadata, when available. |
 
 ## Webhook alert payload (Slack / Make / n8n / Zapier)
 
@@ -361,6 +363,61 @@ items.forEach((item) => {
     console.log(item);
 });
 ```
+
+## Use this from Claude Desktop, Cursor, or Windsurf (via MCP)
+
+This Actor is also reachable as an MCP server through Apify's own hosted `@apify/actors-mcp-server`, scoped to just this Actor via a `?tools=` query string - not the full Delta Registry fleet.
+
+**Claude Desktop** (via the `mcp-remote` stdio bridge):
+
+```json
+{
+  "mcpServers": {
+    "delta-registry-singapore-acra-registry-monitor": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.apify.com/?tools=stefano_seggio/singapore-acra-registry-monitor",
+        "--header",
+        "Authorization: Bearer ${APIFY_TOKEN}"
+      ]
+    }
+  }
+}
+```
+
+**Cursor** (native HTTP transport):
+
+```json
+{
+  "mcpServers": {
+    "delta-registry-singapore-acra-registry-monitor": {
+      "url": "https://mcp.apify.com/?tools=stefano_seggio/singapore-acra-registry-monitor",
+      "headers": {
+        "Authorization": "Bearer ${APIFY_TOKEN}"
+      }
+    }
+  }
+}
+```
+
+**Windsurf** (uses `serverUrl`, not `url`):
+
+```json
+{
+  "mcpServers": {
+    "delta-registry-singapore-acra-registry-monitor": {
+      "serverUrl": "https://mcp.apify.com/?tools=stefano_seggio/singapore-acra-registry-monitor",
+      "headers": {
+        "Authorization": "Bearer ${env:APIFY_TOKEN}"
+      }
+    }
+  }
+}
+```
+
+Replace `${APIFY_TOKEN}` with a real token from [Apify Console → Settings → Integrations](https://console.apify.com/settings/integrations). Note that `mcp-remote` does not expand shell environment variables inside the JSON string itself - paste the literal token and keep this file out of version control; Windsurf's `${env:APIFY_TOKEN}` genuinely does resolve from your environment. For the full 28-actor Delta Registry MCP configuration across all three clients, see [MCP_INTEGRATION.md](https://github.com/stefanoseggio/delta-registry-website/blob/main/MCP_INTEGRATION.md).
 
 ## Sample Extracted Dataset (JSON)
 
