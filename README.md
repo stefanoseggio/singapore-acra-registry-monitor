@@ -448,6 +448,13 @@ One real record from this Actor's own dataset, matching `.actor/dataset_schema.j
 | `UPDATED` | $0.01 | Name, address, SSIC, officer count, former name, or audit firm changed with no status change. |
 | `BASELINE_SNAPSHOT` / `SNAPSHOT_NO_DIFF` | Free | Only delivered when `onlyNew=false`; never charged. |
 
+In addition to the per-event prices above, Apify applies its standard
+platform **Actor-start fee of $0.00005/GB-memory** once per run (not per
+record) - live-verified on the [Pricing tab of the Store
+listing](https://apify.com/stefano_seggio/singapore-acra-registry-monitor/pricing).
+At this Actor's 2048 MB memory allocation that's a fixed ~$0.0001 per run,
+independent of how many events it delivers.
+
 There is no metered free trial of paid events - Apify's Console has no
 mechanism to comp the first N occurrences of a specific event type. To
 validate this Actor before committing spend: run it with `onlyNew: false`
